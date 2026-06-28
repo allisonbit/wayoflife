@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Defense: 777 Vault - $MG Way of Life</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #00ff88;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #authScreen {
+            background: rgba(10, 14, 39, 0.95);
+            border: 2px solid #00ff88;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 0 20px #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            font-size: 18px;
+            color: #00ff88;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px #00ff88;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00ff88;
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #00ff88;
+            border: none;
+            color: #0a0e27;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #00cc6a;
+            box-shadow: 0 0 15px #00ff88;
+        }
+
+        .link-btn {
+            background: none;
+            color: #00ff88;
+            text-decoration: underline;
+            font-size: 14px;
+        }
+
+        #gameContainer {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #gameCanvas {
+            border: 3px solid #00ff88;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+            background: #0f1629;
+        }
+
+        #hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 800px;
+            padding: 15px;
+            background: rgba(10, 14, 39, 0.9);
+            border: 2px solid #00ff88;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        .hud-item {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .hp-bar {
+            display: inline-block;
+            width: 150px;
+            height: 20px;
+            background: rgba(255, 0, 0, 0.3);
+            border: 1px solid #ff0000;
+            position: relative;
+        }
+
+        .hp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000 0%, #ff6600 100%);
+            transition: width 0.3s;
+        }
+
+        #upgradeScreen {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 14, 39, 0.98);
+            border: 3px solid #ffd700;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            z-index: 1000;
+        }
+
+        #upgradeScreen h2 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-size: 28px;
+            text-shadow: 0 0 15px #ffd700;
+        }
+
+        .upgrade-cards {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .upgrade-card {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #00ff88;
+            padding: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 200px;
+            text-align: center;
+        }
+
+        .upgrade-card:hover {
+            border-color: #ffd700;
+            box-shadow: 0 0 20px #ffd700;
+            transform: scale(1.05);
+        }
+
+        .upgrade-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .upgrade-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .upgrade-desc {
+            font-size: 14px;
+            color: #00ff88;
+        }
+
+        #gameOverScreen {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 14, 39, 0.98);
+            border: 3px solid #ff0000;
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.8);
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 1000;
+            min-width: 400px;
+        }
+
+        #gameOverScreen h2 {
+            color: #ff0000;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            margin: 20px 0;
+            font-size: 18px;
+        }
+
+        .stat-line {
+            margin: 10px 0;
+            color: #00ff88;
+        }
+
+        .leaderboard {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .leaderboard h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .leaderboard-entry {
+            padding: 5px;
+            margin: 5px 0;
+            background: rgba(0, 0, 0, 0.5);
+            border-left: 3px solid #00ff88;
+            padding-left: 10px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="authScreen">
+        <div class="logo">$MG</div>
+        <div class="tagline">Way of Life</div>
+        <h2 style="margin-bottom: 20px;">Crypto Defense: 777 Vault</h2>
+        <div id="loginForm">
+            <input type="text" id="loginUsername" placeholder="Username" />
+            <input type="password" id="loginPassword" placeholder="Password" />
+            <button onclick="login()">LOGIN</button>
+            <button class="link-btn" onclick="showRegister()">Don't have an account? Register</button>
+        </div>
+        <div id="registerForm" class="hidden">
+            <input type="text" id="regUsername" placeholder="Choose Username" />
+            <input type="password" id="regPassword" placeholder="Choose Password" />
+            <button onclick="register()">REGISTER</button>
+            <button class="link-btn" onclick="showLogin()">Already have an account? Login</button>
+        </div>
+    </div>
+
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div id="hud">
+            <div class="hud-item">Wave: <span id="waveDisplay">1</span></div>
+            <div class="hud-item">$MG: <span id="mgDisplay">0</span></div>
+            <div class="hud-item">
+                Vault HP:
+                <div class="hp-bar">
+                    <div class="hp-fill" id="hpFill" style="width: 100%;"></div>
+                </div>
+            </div>
+            <div class="hud-item">Player: <span id="playerDisplay"></span></div>
+        </div>
+    </div>
+
+    <div id="upgradeScreen">
+        <h2>⬆️ CHOOSE UPGRADE ⬆️</h2>
+        <div class="upgrade-cards" id="upgradeCards"></div>
+    </div>
+
+    <div id="gameOverScreen">
+        <h2>VAULT COMPROMISED</h2>
+        <div class="stats">
+            <div class="stat-line">Waves Survived: <span id="finalWave"></span></div>
+            <div class="stat-line">$MG Earned: <span id="finalMG"></span></div>
+            <div class="stat-line">Enemies Destroyed: <span id="finalKills"></span></div>
+        </div>
+        <div class="leaderboard">
+            <h3>🏆 Hall of Vaults</h3>
+            <div id="leaderboardList"></div>
+        </div>
+        <button onclick="restartGame()">DEFEND AGAIN</button>
+        <button onclick="logout()">LOGOUT</button>
+    </div>
+
+    <script>
+        // ============================================
+        // AUTH SYSTEM
+        // ============================================
+        let currentUser = null;
+
+        function showLogin() {
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('registerForm').classList.add('hidden');
+        }
+
+        function showRegister() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
+        }
+
+        function register() {
+            const username = document.getElementById('regUsername').value.trim();
+            const password = document.getElementById('regPassword').value;
+
+            if (!username || !password) {
+                alert('Please enter both username and password');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('cryptoDefenseUsers') || '{}');
+
+            if (users[username]) {
+                alert('Username already exists');
+                return;
+            }
+
+            users[username] = btoa(password);
+            localStorage.setItem('cryptoDefenseUsers', JSON.stringify(users));
+
+            alert('Registration successful! Please login.');
+            showLogin();
+        }
+
+        function login() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!username || !password) {
+                alert('Please enter both username and password');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('cryptoDefenseUsers') || '{}');
+
+            if (!users[username] || users[username] !== btoa(password)) {
+                alert('Invalid username or password');
+                return;
+            }
+
+            currentUser = username;
+            startGame();
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('authScreen').style.display = 'block';
+            document.getElementById('gameContainer').style.display = 'none';
+            document.getElementById('gameOverScreen').style.display = 'none';
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+        }
+
+        function startGame() {
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('gameContainer').style.display = 'flex';
+            document.getElementById('playerDisplay').textContent = currentUser;
+            initGame();
+        }
+
+        // ============================================
+        // GAME CORE
+        // ============================================
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let gameState = {
+            wave: 1,
+            mg: 0,
+            kills: 0,
+            vaultHP: 100,
+            vaultMaxHP: 100,
+            running: false,
+            paused: false,
+            gameOver: false,
+            fireRate: 2,
+            bulletDamage: 10,
+            shield: null,
+            turrets: [],
+            scoreMultiplier: 1,
+            multiplierWaves: 0
+        };
+
+        const vault = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            radius: 40
+        };
+
+        let enemies = [];
+        let bullets = [];
+        let coins = [];
+        let enemiesInWave = 0;
+        let enemiesSpawned = 0;
+        let lastShot = 0;
+        let lastSpawn = 0;
+        let mouse = { x: 0, y: 0 };
+
+        // ============================================
+        // ENEMY TYPES
+        // ============================================
+        const enemyTypes = {
+            bot: {
+                name: 'Bot',
+                color: '#888888',
+                speed: 2.5,
+                hp: 20,
+                damage: 5,
+                reward: 10,
+                size: 15
+            },
+            hacker: {
+                name: 'Hacker',
+                color: '#9b59b6',
+                speed: 1.5,
+                hp: 40,
+                damage: 8,
+                reward: 25,
+                size: 20,
+                canShoot: true
+            },
+            drone: {
+                name: 'Scam Drone',
+                color: '#3498db',
+                speed: 3,
+                hp: 30,
+                damage: 6,
+                reward: 20,
+                size: 18,
+                flying: true
+            },
+            whale: {
+                name: 'Whale Boss',
+                color: '#1abc9c',
+                speed: 0.8,
+                hp: 300,
+                damage: 20,
+                reward: 100,
+                size: 50,
+                boss: true
+            },
+            rug: {
+                name: 'THE RUG',
+                color: '#000000',
+                speed: 1,
+                hp: 1000,
+                damage: 999,
+                reward: 500,
+                size: 60,
+                finalBoss: true
+            }
+        };
+
+        // ============================================
+        // UPGRADE SYSTEM
+        // ============================================
+        const upgrades = [
+            {
+                icon: '🔫',
+                title: 'Weapon Upgrade',
+                desc: 'Bullet damage +25%',
+                apply: () => { gameState.bulletDamage *= 1.25; }
+            },
+            {
+                icon: '⚡️',
+                title: 'Fire Rate',
+                desc: 'Shots per second +1',
+                apply: () => { gameState.fireRate += 1; }
+            },
+            {
+                icon: '🛡',
+                title: 'Shield',
+                desc: 'Absorbs 1 hit, recharges',
+                apply: () => {
+                    gameState.shield = {
+                        active: true,
+                        rechargeTime: 0,
+                        maxRecharge: 10000
+                    };
+                }
+            },
+            {
+                icon: '🤖',
+                title: 'Deploy Turret',
+                desc: 'Adds auto-firing turret',
+                apply: () => {
+                    if (gameState.turrets.length < 3) {
+                        const angle = (gameState.turrets.length * Math.PI * 2 / 3);
+                        gameState.turrets.push({
+                            x: vault.x + Math.cos(angle) * 80,
+                            y: vault.y + Math.sin(angle) * 80,
+                            lastShot: 0,
+                            fireRate: 1
+                        });
+                    }
+                }
+            },
+            {
+                icon: '💰',
+                title: '$MG Airdrop',
+                desc: 'Score multiplier x2',
+                apply: () => {
+                    gameState.scoreMultiplier = 2;
+                    gameState.multiplierWaves = 3;
+                }
+            }
+        ];
+
+        function showUpgradeScreen() {
+            gameState.paused = true;
+            const upgradeScreen = document.getElementById('upgradeScreen');
+            const cardsContainer = document.getElementById('upgradeCards');
+            cardsContainer.innerHTML = '';
+
+            // Randomly select 3 upgrades
+            const shuffled = [...upgrades].sort(() => Math.random() - 0.5).slice(0, 3);
+
+            shuffled.forEach(upgrade => {
+                const card = document.createElement('div');
+                card.className = 'upgrade-card';
+                card.innerHTML = `
+                    <div class="upgrade-icon">${upgrade.icon}</div>
+                    <div class="upgrade-title">${upgrade.title}</div>
+                    <div class="upgrade-desc">${upgrade.desc}</div>
+                `;
+                card.onclick = () => {
+                    upgrade.apply();
+                    upgradeScreen.style.display = 'none';
+                    gameState.paused = false;
+                };
+                cardsContainer.appendChild(card);
+            });
+
+            upgradeScreen.style.display = 'block';
+        }
+
+        // ============================================
+        // GAME INITIALIZATION
+        // ============================================
+        function initGame() {
+            gameState = {
+                wave: 1,
+                mg: 0,
+                kills: 0,
+                vaultHP: 100,
+                vaultMaxHP: 100,
+                running: true,
+                paused: false,
+                gameOver: false,
+                fireRate: 2,
+                bulletDamage: 10,
+                shield: null,
+                turrets: [],
+                scoreMultiplier: 1,
+                multiplierWaves: 0
+            };
+
+            enemies = [];
+            bullets = [];
+            coins = [];
+            enemiesInWave = 0;
+            enemiesSpawned = 0;
+            lastShot = 0;
+            lastSpawn = 0;
+
+            updateHUD();
+            startWave();
+            gameLoop();
+        }
+
+        function startWave() {
+            enemiesSpawned = 0;
+
+            // Calculate enemies for this wave
+            if (gameState.wave % 5 === 0 && gameState.wave !== 20) {
+                // Boss wave every 5 waves
+                enemiesInWave = 1;
+            } else if (gameState.wave === 20) {
+                // Final boss
+                enemiesInWave = 1;
+            } else {
+                enemiesInWave = 5 + gameState.wave * 2;
+            }
+
+            // Handle multiplier countdown
+            if (gameState.multiplierWaves > 0) {
+                gameState.multiplierWaves--;
+                if (gameState.multiplierWaves === 0) {
+                    gameState.scoreMultiplier = 1;
+                }
+            }
+        }
+
+        function spawnEnemy() {
+            let type;
+
+            if (gameState.wave === 20) {
+                type = 'rug';
+            } else if (gameState.wave % 5 === 0) {
+                type = 'whale';
+            } else {
+                const rand = Math.random();
+                if (rand < 0.5) type = 'bot';
+                else if (rand < 0.75) type = 'hacker';
+                else type = 'drone';
+            }
+
+            const template = enemyTypes[type];
+            const side = Math.floor(Math.random() * 4);
+            let x, y;
+
+            switch(side) {
+                case 0: x = Math.random() * canvas.width; y = -50; break;
+                case 1: x = canvas.width + 50; y = Math.random() * canvas.height; break;
+                case 2: x = Math.random() * canvas.width; y = canvas.height + 50; break;
+                case 3: x = -50; y = Math.random() * canvas.height; break;
+            }
+
+            enemies.push({
+                x, y,
+                type,
+                ...template,
+                maxHP: template.hp,
+                lastShot: 0
+            });
+        }
+
+        // ============================================
+        // GAME LOOP
+        // ============================================
+        function gameLoop(timestamp = 0) {
+            if (!gameState.running) return;
+
+            if (!gameState.paused && !gameState.gameOver) {
+                update(timestamp);
+                render();
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function update(timestamp) {
+            // Spawn enemies
+            if (enemiesSpawned < enemiesInWave && timestamp - lastSpawn > 1000) {
+                spawnEnemy();
+                enemiesSpawned++;
+                lastSpawn = timestamp;
+            }
+
+            // Check if wave complete
+            if (enemiesSpawned >= enemiesInWave && enemies.length === 0) {
+                gameState.wave++;
+
+                if (gameState.wave % 5 === 0) {
+                    showUpgradeScreen();
+                }
+
+                startWave();
+            }
+
+            // Auto-shoot at nearest enemy
+            if (enemies.length > 0 && timestamp - lastShot > 1000 / gameState.fireRate) {
+                const nearest = findNearestEnemy(vault.x, vault.y);
+                if (nearest) {
+                    shootAt(vault.x, vault.y, nearest);
+                    lastShot = timestamp;
+                }
+            }
+
+            // Turrets shoot
+            gameState.turrets.forEach(turret => {
+                if (enemies.length > 0 && timestamp - turret.lastShot > 1000 / turret.fireRate) {
+                    const nearest = findNearestEnemy(turret.x, turret.y);
+                    if (nearest) {
+                        shootAt(turret.x, turret.y, nearest);
+                        turret.lastShot = timestamp;
+                    }
+                }
+            });
+
+            // Update enemies
+            enemies.forEach((enemy, i) => {
+                const dx = vault.x - enemy.x;
+                const dy = vault.y - enemy.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist > vault.radius + enemy.size) {
+                    enemy.x += (dx / dist) * enemy.speed;
+                    enemy.y += (dy / dist) * enemy.speed;
+                } else {
+                    // Enemy reached vault
+                    damageVault(enemy.damage);
+                    enemies.splice(i, 1);
+                }
+
+                // Hacker shoots
+                if (enemy.canShoot && timestamp - enemy.lastShot > 2000) {
+                    shootEnemyProjectile(enemy);
+                    enemy.lastShot = timestamp;
+                }
+            });
+
+            // Update bullets
+            bullets.forEach((bullet, i) => {
+                bullet.x += bullet.vx;
+                bullet.y += bullet.vy;
+
+                // Check collision with enemies
+                enemies.forEach((enemy, j) => {
+                    const dx = enemy.x - bullet.x;
+                    const dy = enemy.y - bullet.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < enemy.size) {
+                        enemy.hp -= gameState.bulletDamage;
+                        bullets.splice(i, 1);
+
+                        if (enemy.hp <= 0) {
+                            gameState.kills++;
+                            const reward = Math.floor(enemy.reward * gameState.scoreMultiplier);
+                            gameState.mg += reward;
+
+                            coins.push({
+                                x: enemy.x,
+                                y: enemy.y,
+                                value: reward,
+                                life: 60
+                            });
+
+                            enemies.splice(j, 1);
+                        }
+                    }
+                });
+
+                // Remove bullets off screen
+                if (bullet.x < 0 || bullet.x > canvas.width || bullet.y < 0 || bullet.y > canvas.height) {
+                    bullets.splice(i, 1);
+                }
+            });
+
+            // Update coins
+            coins.forEach((coin, i) => {
+                coin.life--;
+                if (coin.life <= 0) {
+                    coins.splice(i, 1);
+                }
+            });
+
+            // Update shield recharge
+            if (gameState.shield && !gameState.shield.active) {
+                gameState.shield.rechargeTime += 16;
+                if (gameState.shield.rechargeTime >= gameState.shield.maxRecharge) {
+                    gameState.shield.active = true;
+                    gameState.shield.rechargeTime = 0;
+                }
+            }
+
+            updateHUD();
+        }
+
+        function findNearestEnemy(x, y) {
+            let nearest = null;
+            let minDist = Infinity;
+
+            enemies.forEach(enemy => {
+                const dx = enemy.x - x;
+                const dy = enemy.y - y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < minDist) {
+                    minDist = dist;
+                    nearest = enemy;
+                }
+            });
+
+            return nearest;
+        }
+
+        function shootAt(fromX, fromY, target) {
+            const dx = target.x - fromX;
+            const dy = target.y - fromY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const speed = 8;
+
+            bullets.push({
+                x: fromX,
+                y: fromY,
+                vx: (dx / dist) * speed,
+                vy: (dy / dist) * speed,
+                friendly: true
+            });
+        }
+
+        function shootEnemyProjectile(enemy) {
+            const dx = vault.x - enemy.x;
+            const dy = vault.y - enemy.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const speed = 4;
+
+            bullets.push({
+                x: enemy.x,
+                y: enemy.y,
+                vx: (dx / dist) * speed,
+                vy: (dy / dist) * speed,
+                friendly: false,
+                damage: 3
+            });
+        }
+
+        function damageVault(damage) {
+            if (gameState.shield && gameState.shield.active) {
+                gameState.shield.active = false;
+                gameState.shield.rechargeTime = 0;
+                return;
+            }
+
+            gameState.vaultHP -= damage;
+
+            if (gameState.vaultHP <= 0) {
+                gameState.vaultHP = 0;
+                endGame();
+            }
+        }
+
+        // ============================================
+        // RENDERING
+        // ============================================
+        function render() {
+            ctx.fillStyle = '#0f1629';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw vault
+            ctx.fillStyle = '#ffd700';
+            ctx.beginPath();
+            ctx.arc(vault.x, vault.y, vault.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#00ff88';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            ctx.fillStyle = '#0a0e27';
+            ctx.font = 'bold 12px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText('777 VAULT', vault.x, vault.y - 5);
+            ctx.fillText('$MG', vault.x, vault.y + 10);
+
+            // Draw shield
+            if (gameState.shield && gameState.shield.active) {
+                ctx.strokeStyle = 'rgba(0, 255, 255, 0.5)';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(vault.x, vault.y, vault.radius + 10, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            // Draw turrets
+            gameState.turrets.forEach(turret => {
+                ctx.fillStyle = '#00ff88';
+                ctx.beginPath();
+                ctx.arc(turret.x, turret.y, 15, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Draw enemies
+            enemies.forEach(enemy => {
+                ctx.fillStyle = enemy.color;
+                ctx.beginPath();
+                ctx.arc(enemy.x, enemy.y, enemy.size, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw label
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '10px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText(enemy.name, enemy.x, enemy.y - enemy.size - 5);
+
+                // HP bar
+                const hpBarWidth = enemy.size * 2;
+                const hpPercent = enemy.hp / enemy.maxHP;
+
+                ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+                ctx.fillRect(enemy.x - hpBarWidth/2, enemy.y + enemy.size + 5, hpBarWidth, 4);
+
+                ctx.fillStyle = '#ff0000';
+                ctx.fillRect(enemy.x - hpBarWidth/2, enemy.y + enemy.size + 5, hpBarWidth * hpPercent, 4);
+            });
+
+            // Draw bullets
+            bullets.forEach(bullet => {
+                ctx.fillStyle = bullet.friendly ? '#00ff88' : '#ff00ff';
+                ctx.beginPath();
+                ctx.arc(bullet.x, bullet.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Draw coins
+            coins.forEach(coin => {
+                const alpha = coin.life / 60;
+                ctx.fillStyle = `rgba(255, 215, 0, ${alpha})`;
+                ctx.font = '20px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText('$', coin.x, coin.y);
+            });
+
+            // Draw wave announcement
+            if (enemiesSpawned < 3) {
+                ctx.fillStyle = 'rgba(255, 215, 0, 0.8)';
+                ctx.font = 'bold 36px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText(`WAVE ${gameState.wave}`, canvas.width / 2, 50);
+            }
+        }
+
+        function updateHUD() {
+            document.getElementById('waveDisplay').textContent = gameState.wave;
+            document.getElementById('mgDisplay').textContent = gameState.mg.toLocaleString();
+
+            const hpPercent = (gameState.vaultHP / gameState.vaultMaxHP) * 100;
+            document.getElementById('hpFill').style.width = hpPercent + '%';
+        }
+
+        // ============================================
+        // GAME OVER & LEADERBOARD
+        // ============================================
+        function endGame() {
+            gameState.gameOver = true;
+            gameState.running = false;
+
+            // Save score
+            saveScore();
+
+            // Show game over screen
+            document.getElementById('finalWave').textContent = gameState.wave;
+            document.getElementById('finalMG').textContent = gameState.mg.toLocaleString();
+            document.getElementById('finalKills').textContent = gameState.kills;
+
+            displayLeaderboard();
+
+            document.getElementById('gameOverScreen').style.display = 'block';
+        }
+
+        function saveScore() {
+            const scores = JSON.parse(localStorage.getItem('cryptoDefenseScores') || '[]');
+
+            scores.push({
+                username: currentUser,
+                wave: gameState.wave,
+                mg: gameState.mg,
+                kills: gameState.kills,
+                timestamp: Date.now()
+            });
+
+            // Sort by wave, then by mg
+            scores.sort((a, b) => {
+                if (b.wave !== a.wave) return b.wave - a.wave;
+                return b.mg - a.mg;
+            });
+
+            // Keep top 50 scores
+            localStorage.setItem('cryptoDefenseScores', JSON.stringify(scores.slice(0, 50)));
+        }
+
+        function displayLeaderboard() {
+            const scores = JSON.parse(localStorage.getItem('cryptoDefenseScores') || '[]');
+            const leaderboardList = document.getElementById('leaderboardList');
+            leaderboardList.innerHTML = '';
+
+            scores.slice(0, 5).forEach((score, i) => {
+                const entry = document.createElement('div');
+                entry.className = 'leaderboard-entry';
+                entry.innerHTML = `
+                    <strong>#${i + 1} ${score.username}</strong> -
+                    Wave ${score.wave},
+                    $MG ${score.mg.toLocaleString()},
+                    ${score.kills} kills
+                `;
+                leaderboardList.appendChild(entry);
+            });
+
+            if (scores.length === 0) {
+                leaderboardList.innerHTML = '<div class="leaderboard-entry">No scores yet</div>';
+            }
+        }
+
+        function restartGame() {
+            document.getElementById('gameOverScreen').style.display = 'none';
+            initGame();
+        }
+
+        // ============================================
+        // MOUSE EVENTS
+        // ============================================
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = e.clientX - rect.left;
+            mouse.y = e.clientY - rect.top;
+        });
+
+        canvas.addEventListener('click', () => {
+            if (gameState.paused || gameState.gameOver) return;
+
+            // Manual shoot towards mouse
+            const dx = mouse.x - vault.x;
+            const dy = mouse.y - vault.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const speed = 8;
+
+            bullets.push({
+                x: vault.x,
+                y: vault.y,
+                vx: (dx / dist) * speed,
+                vy: (dy / dist) * speed,
+                friendly: true
+            });
+        });
+    </script>
+</body>
+</html>
